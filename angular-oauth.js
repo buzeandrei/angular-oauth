@@ -47,6 +47,7 @@
 		return {
 			isAuthenticated: isAuthenticated,
 			generateAccessToken: generateAccessToken,
+			generateAccessTokenWithCaptcha: generateAccessTokenWithCaptcha,
 			generateAccessTokenWithGrant: generateAccessTokenWithGrant,
 			refreshAccessToken: refreshAccessToken,
 			getOAuthData: getOAuthData,
@@ -66,6 +67,28 @@
 				grant_type: 'password',
 				client_id: config.clientId,
 				client_secret: config.clientSecret
+			};
+
+			return $http.post(config.baseUrl + config.grantPath, data)
+				.then(function (response) {
+					return storeOAuthData(response.data);
+				});
+		}
+
+		/**
+		 * Requests a new access token using a username and password
+		 * @param {string} username
+		 * @param {string} password
+		 * @returns {promise}
+		 */
+		function generateAccessTokenWithCaptcha(username, password, recaptcha) {
+			var data = {
+				username: username,
+				password: password,
+				grant_type: 'password',
+				client_id: config.clientId,
+				client_secret: config.clientSecret,
+				recaptcha: recaptcha
 			};
 
 			return $http.post(config.baseUrl + config.grantPath, data)
